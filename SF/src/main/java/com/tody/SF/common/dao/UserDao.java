@@ -9,8 +9,14 @@ import java.sql.SQLException;
 import com.tody.SF.common.dto.User;
 
 public class UserDao {
+	private SimpleConnectionMaker simpleCommectionMaker;
+	
+	public UserDao() {
+		simpleCommectionMaker = new SimpleConnectionMaker();
+	}
 	public void add(User user) throws ClassNotFoundException, SQLException{
-		 Connection c = getConnection();
+		
+		 Connection c = simpleCommectionMaker.makeNewConnection();
 		 
 		 PreparedStatement ps = c.prepareStatement(
 				 "insert into users (id, name, password) values(?,?,?)");
@@ -25,7 +31,7 @@ public class UserDao {
 	}
 	
 	public User get(String id) throws ClassNotFoundException, SQLException{
-		 Connection c = getConnection();
+		 Connection c = simpleCommectionMaker.makeNewConnection();
 		 
 		 PreparedStatement ps = c.prepareStatement(
 				 "SELECT * FROM users where id = ?");
@@ -43,18 +49,19 @@ public class UserDao {
 		 
 		 rs.close();
 		 ps.close();
+		  
 		 c.close();
 		 
 		 return user;
 	}
-	// 중복되는 DB Connection 메소드 추출
-	public Connection getConnection() throws ClassNotFoundException, SQLException{
-		 Class.forName("oracle.jdbc.driver.OracleDriver");
-		 Connection c = DriverManager.getConnection(
-		 "jdbc:oracle:thin:@localhost:1521:orcl",
-		 "C##hansu",
-		 "tngh1228");
-		 
-		 return c;
-	}
+//	// 중복되는 DB Connection 메소드 추출
+//	public Connection getConnection() throws ClassNotFoundException, SQLException{
+//		 Class.forName("oracle.jdbc.driver.OracleDriver");
+//		 Connection c = DriverManager.getConnection(
+//		 "jdbc:oracle:thin:@localhost:1521:orcl",
+//		 "C##hansu",
+//		 "tngh1228");
+//		 
+//		 return c;
+//	} --> SimpleConnectionMaker클래스 makeNewConnection로 분리
 }
