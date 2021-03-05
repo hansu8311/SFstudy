@@ -47,7 +47,7 @@ public class UserDao {
 		 
 		 return user;
 	}
-	//Áßº¹µÇ´Â DB Connection ÃßÃâ
+	// ì¤‘ë³µë˜ëŠ” DB Connection ë©”ì†Œë“œ ì¶”ì¶œ
 	public Connection getConnection() throws ClassNotFoundException, SQLException{
 		 Class.forName("oracle.jdbc.driver.OracleDriver");
 		 Connection c = DriverManager.getConnection(
