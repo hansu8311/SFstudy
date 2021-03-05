@@ -10,32 +10,25 @@ import com.tody.SF.common.dto.User;
 
 public class UserDao {
 	public void add(User user) throws ClassNotFoundException, SQLException{
-		 Class.forName("oracle.jdbc.driver.OracleDriver");
-		 Connection c = DriverManager.getConnection(
-		 "jdbc:oracle:thin:@localhost:1521:orcl",
-		 "C##hansu",
-		 "tndh1228");
+		 Connection c = getConnection();
 		 
 		 PreparedStatement ps = c.prepareStatement(
 				 "insert into users (id, name, password) values(?,?,?)");
 		 ps.setString(1, user.getId());
-		 ps.setString(1, user.getName());
-		 ps.setString(1, user.getPassword());
+		 ps.setString(2, user.getName());
+		 ps.setString(3, user.getPassword());
 		 
 		 ps.executeUpdate();
+		 
 		 ps.close();
 		 c.close();
 	}
 	
-	public void get(String id) throws ClassNotFoundException, SQLException{
-		 Class.forName("oracle.jdbc.driver.OracleDriver");
-		 Connection c = DriverManager.getConnection(
-		 "jdbc:oracle:thin:@localhost:1521:orcl",
-		 "C##hansu",
-		 "tndh1228");
+	public User get(String id) throws ClassNotFoundException, SQLException{
+		 Connection c = getConnection();
 		 
 		 PreparedStatement ps = c.prepareStatement(
-				 "SELET * FRO users whrer id = ?");
+				 "SELECT * FROM users where id = ?");
 		 ps.setString(1, id);
 	
 		 ResultSet rs = ps.executeQuery();
@@ -51,5 +44,17 @@ public class UserDao {
 		 rs.close();
 		 ps.close();
 		 c.close();
+		 
+		 return user;
+	}
+	//중복되는 DB Connection 추출
+	public Connection getConnection() throws ClassNotFoundException, SQLException{
+		 Class.forName("oracle.jdbc.driver.OracleDriver");
+		 Connection c = DriverManager.getConnection(
+		 "jdbc:oracle:thin:@localhost:1521:orcl",
+		 "C##hansu",
+		 "tngh1228");
+		 
+		 return c;
 	}
 }
