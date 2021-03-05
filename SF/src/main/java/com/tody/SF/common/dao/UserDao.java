@@ -9,14 +9,14 @@ import java.sql.SQLException;
 import com.tody.SF.common.dto.User;
 
 public class UserDao {
-	private SimpleConnectionMaker simpleCommectionMaker;
+	private ConnectionMaker commectionMaker;
 	
 	public UserDao() {
-		simpleCommectionMaker = new SimpleConnectionMaker();
+		commectionMaker = new DConnectionMaker();
 	}
 	public void add(User user) throws ClassNotFoundException, SQLException{
 		
-		 Connection c = simpleCommectionMaker.makeNewConnection();
+		 Connection c = commectionMaker.makeConnection();
 		 
 		 PreparedStatement ps = c.prepareStatement(
 				 "insert into users (id, name, password) values(?,?,?)");
@@ -31,7 +31,8 @@ public class UserDao {
 	}
 	
 	public User get(String id) throws ClassNotFoundException, SQLException{
-		 Connection c = simpleCommectionMaker.makeNewConnection();
+		
+		 Connection c = commectionMaker.makeConnection();
 		 
 		 PreparedStatement ps = c.prepareStatement(
 				 "SELECT * FROM users where id = ?");
