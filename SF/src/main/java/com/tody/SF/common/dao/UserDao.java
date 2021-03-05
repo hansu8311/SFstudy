@@ -11,8 +11,9 @@ import com.tody.SF.common.dto.User;
 public class UserDao {
 	private ConnectionMaker commectionMaker;
 	
-	public UserDao() {
-		commectionMaker = new DConnectionMaker();
+	public UserDao(ConnectionMaker connectionMaker) {
+		//commectionMaker = new DConnectionMaker();
+		this.commectionMaker = connectionMaker;
 	}
 	public void add(User user) throws ClassNotFoundException, SQLException{
 		
