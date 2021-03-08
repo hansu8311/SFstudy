@@ -9,7 +9,7 @@ import java.sql.SQLException;
 import com.tody.SF.common.dto.User;
 
 public class UserDao {
-	private ConnectionMaker commectionMaker;
+	private ConnectionMaker commectionMaker;//초기에 설정하면 사용중에는 바뀌지 않는 읽기전용 인스턴스 변수
 	
 	public UserDao(ConnectionMaker connectionMaker) {
 		//commectionMaker = new DConnectionMaker();
