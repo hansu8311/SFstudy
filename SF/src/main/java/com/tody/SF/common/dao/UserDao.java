@@ -6,22 +6,24 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import javax.sql.DataSource;
+
 import com.tody.SF.common.dto.User;
 
 public class UserDao {
-	private ConnectionMaker commectionMaker;//초기에 설정하면 사용중에는 바뀌지 않는 읽기전용 인스턴스 변수
+	private DataSource dataSource;//초기에 설정하면 사용중에는 바뀌지 않는 읽기전용 인스턴스 변수
 	
 //	public UserDao(ConnectionMaker connectionMaker) {
 //		//commectionMaker = new DConnectionMaker();
 //		this.commectionMaker = connectionMaker;
 //	}
 	//수정자 메소드 생성
-	public void setConnectionMaker(ConnectionMaker connectionMaker) {
-		this.commectionMaker = connectionMaker;
+	public void setDataSource(DataSource dataSource) {
+		this.dataSource = dataSource;
 	}
-	public void add(User user) throws ClassNotFoundException, SQLException{
+	public void add(User user) throws SQLException{
 		
-		 Connection c = commectionMaker.makeConnection();
+		 Connection c = dataSource.getConnection();
 		 
 		 PreparedStatement ps = c.prepareStatement(
 				 "insert into users (id, name, password) values(?,?,?)");
@@ -37,7 +39,7 @@ public class UserDao {
 	
 	public User get(String id) throws ClassNotFoundException, SQLException{
 		
-		 Connection c = commectionMaker.makeConnection();
+		 Connection c = dataSource.getConnection();
 		 
 		 PreparedStatement ps = c.prepareStatement(
 				 "SELECT * FROM users where id = ?");
