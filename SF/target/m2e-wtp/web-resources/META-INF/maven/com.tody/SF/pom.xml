@@ -130,7 +130,14 @@
    			<artifactId>spring-jdbc</artifactId>
     		<version>${org.springframework-version}</version>
 		</dependency>
-
+		
+		<!-- Spring Test -->
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-test</artifactId>
+			<version>${org.springframework-version}</version>
+		</dependency>
+		
 	</dependencies>
     <build>
         <plugins>
