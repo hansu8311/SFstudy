@@ -15,11 +15,6 @@ import com.tody.SF.common.dto.User;
 public class UserDao {
 	private DataSource dataSource;//초기에 설정하면 사용중에는 바뀌지 않는 읽기전용 인스턴스 변수
 	
-//	public UserDao(ConnectionMaker connectionMaker) {
-//		//commectionMaker = new DConnectionMaker();
-//		this.commectionMaker = connectionMaker;
-//	}
-	//수정자 메소드 생성
 	public void setDataSource(DataSource dataSource) {
 		this.dataSource = dataSource;
 	}
@@ -67,34 +62,8 @@ public class UserDao {
 		 return user;
 	}
 	public void deleteAll() throws SQLException{
-		Connection c = null;
-		 PreparedStatement ps = null;
-		try {
-			 c = dataSource.getConnection();
-			 ps = c.prepareStatement("DELETE FROM Users");
-			 ps.executeUpdate();
-		} catch (SQLException e) {
-			throw e;
-		} finally {
-			if(ps!=null) {
-				try {
-					ps.close();
-				} catch (SQLException e) {
-				}
-				
-			}
-			if(c != null) {
-				try {
-					c.close();
-				} catch (SQLException e) {
-				}
-			}
-		}
-	
-		 
-		 ps.close(); 
-		 c.close();
-		 
+		StatementStrategy st = new DeleteAllStatement();
+		jdbcContextWithStatementStrategy(st);
 	}
 	public int getCount() throws ClassNotFoundException, SQLException{
 		
@@ -131,6 +100,43 @@ public class UserDao {
 			}
 		}
 	}
+	public void jdbcContextWithStatementStrategy(StatementStrategy stmt) throws SQLException{
+		Connection c = null;
+		 PreparedStatement ps = null;
+		try {
+			 c = dataSource.getConnection();
+
+			 ps = stmt.makePreparedStatement(c);
+			 
+			 ps.executeUpdate();
+		} catch (SQLException e) {
+			throw e;
+		} finally {
+			if(ps!=null) {
+				try {
+					ps.close();
+				} catch (SQLException e) {
+				}
+				
+			}
+			if(c != null) {
+				try {
+					c.close();
+				} catch (SQLException e) {
+				}
+			}
+		}
+	
+		 
+		 ps.close(); 
+		 c.close();
+		 
+	}
+//	private PreparedStatement makeStatement(Connection c) throws SQLException{
+//		PreparedStatement ps;
+//		ps = c.prepareStatement("DELETE FROM Users");
+//		return ps;
+//	}
 //	// 중복되는 DB Connection 메소드 추출
 //	public Connection getConnection() throws ClassNotFoundException, SQLException{
 //		 Class.forName("oracle.jdbc.driver.OracleDriver");
