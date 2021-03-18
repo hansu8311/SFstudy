@@ -14,24 +14,39 @@ import com.tody.SF.common.dto.User;
 
 public class UserDao {
 	private DataSource dataSource;//초기에 설정하면 사용중에는 바뀌지 않는 읽기전용 인스턴스 변수
+	private JdbcContext jdbcContext;
 	
 	public void setDataSource(DataSource dataSource) {
 		this.dataSource = dataSource;
 	}
-	public void add(User user) throws SQLException{
-		
-		 Connection c = dataSource.getConnection();
-		 
-		 PreparedStatement ps = c.prepareStatement(
-				 "insert into users (id, name, password) values(?,?,?)");
-		 ps.setString(1, user.getId());
-		 ps.setString(2, user.getName());
-		 ps.setString(3, user.getPassword());
-		 
-		 ps.executeUpdate();
-		 
-		 ps.close();
-		 c.close();
+	
+	public void setJdbcContext(JdbcContext jdbcContext) {
+		this.jdbcContext = jdbcContext;
+	}
+	
+	public void add(final User user) throws SQLException{
+		 jdbcContext.workWithStatementStrategy(
+				 new StatementStrategy() {//익명내부클래스
+					@Override
+					public PreparedStatement makePreparedStatement(Connection c) throws SQLException {
+						PreparedStatement ps = c.prepareStatement("insert into users (id, name, password) values(?,?,?)");
+						ps.setString(1, user.getId());
+						ps.setString(2, user.getName());
+						ps.setString(3, user.getPassword());
+						
+						return ps;
+					}
+				});
+	}
+	
+	public void deleteAll() throws SQLException{
+		jdbcContext.workWithStatementStrategy(
+				 new StatementStrategy() {
+					@Override
+					public PreparedStatement makePreparedStatement(Connection c) throws SQLException {
+						return c.prepareStatement("DELETE FROM Users");
+					}
+				});
 	}
 	
 	public User get(String id) throws ClassNotFoundException, SQLException{
@@ -61,10 +76,7 @@ public class UserDao {
 		 
 		 return user;
 	}
-	public void deleteAll() throws SQLException{
-		StatementStrategy st = new DeleteAllStatement();
-		jdbcContextWithStatementStrategy(st);
-	}
+
 	public int getCount() throws ClassNotFoundException, SQLException{
 		
 		Connection c = null;
@@ -100,51 +112,4 @@ public class UserDao {
 			}
 		}
 	}
-	public void jdbcContextWithStatementStrategy(StatementStrategy stmt) throws SQLException{
-		Connection c = null;
-		 PreparedStatement ps = null;
-		try {
-			 c = dataSource.getConnection();
-
-			 ps = stmt.makePreparedStatement(c);
-			 
-			 ps.executeUpdate();
-		} catch (SQLException e) {
-			throw e;
-		} finally {
-			if(ps!=null) {
-				try {
-					ps.close();
-				} catch (SQLException e) {
-				}
-				
-			}
-			if(c != null) {
-				try {
-					c.close();
-				} catch (SQLException e) {
-				}
-			}
-		}
-	
-		 
-		 ps.close(); 
-		 c.close();
-		 
-	}
-//	private PreparedStatement makeStatement(Connection c) throws SQLException{
-//		PreparedStatement ps;
-//		ps = c.prepareStatement("DELETE FROM Users");
-//		return ps;
-//	}
-//	// 중복되는 DB Connection 메소드 추출
-//	public Connection getConnection() throws ClassNotFoundException, SQLException{
-//		 Class.forName("oracle.jdbc.driver.OracleDriver");
-//		 Connection c = DriverManager.getConnection(
-//		 "jdbc:oracle:thin:@localhost:1521:orcl",
-//		 "C##hansu",
-//		 "tngh1228");
-//		 
-//		 return c;
-//	} --> SimpleConnectionMaker클래스 makeNewConnection로 분리
 }
