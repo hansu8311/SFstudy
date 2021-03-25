@@ -34,14 +34,14 @@ public class UserDao {
 	private JdbcTemplate jdbcTemplate;
 	
 	public void setDataSource(DataSource dataSource) {
-		this.jdbcTemplate = new JdbcTemplate(dataSource);
+
 	}
 	
 	public void add(final User user) throws SQLException{
 		this.jdbcTemplate.update("insert into users (id, name, password) values(?,?,?)", user.getId(), user.getName(), user.getPassword());
 	}
 	
-	public void deleteAll() throws SQLException{
+	public void deleteAll() {
 		this.jdbcTemplate.update("delete from users");
 	}
 	
