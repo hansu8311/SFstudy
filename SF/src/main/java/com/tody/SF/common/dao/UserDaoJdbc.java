@@ -18,8 +18,10 @@ import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.RowMapper;
 
 import com.tody.SF.common.dao.Interface.UserDao;
+import com.tody.SF.common.dto.Level;
 import com.tody.SF.common.dto.User;
 import com.tody.SF.exception.DuplicateUserIdException;
+
 
 public class UserDaoJdbc implements UserDao {
 	
@@ -30,6 +32,9 @@ public class UserDaoJdbc implements UserDao {
 			user.setId(rs.getString("id"));
 			user.setName(rs.getString("name"));
 			user.setPassword(rs.getString("password"));
+			user.setLevels(Level.valueOf(rs.getInt("levels")));
+			user.setLogin(rs.getInt("login"));
+			user.setRecommend(rs.getInt("recommend"));
 			return user;
 		}
 	};
@@ -41,7 +46,7 @@ public class UserDaoJdbc implements UserDao {
 	}
 	
 	public void add(final User user) throws DuplicateKeyException{
-			this.jdbcTemplate.update("insert into users (id, name, password) values(?,?,?)", user.getId(), user.getName(), user.getPassword());
+			this.jdbcTemplate.update("insert into users (id, name, password, levels, login, recommend) values(?,?,?,?,?,?)", user.getId(), user.getName(), user.getPassword(),user.getLevels().intValue(),user.getLogin(),user.getRecommend());
 	}
 	
 	public void deleteAll() {
@@ -61,6 +66,11 @@ public class UserDaoJdbc implements UserDao {
 	public List<User> getAll() {
 		return this.jdbcTemplate.query("SELECT * FROM users order by id", 
 		this.userMapper);	
+	}
+
+	@Override
+	public void update(User user) {
+		this.jdbcTemplate.update("update users set name = ?, password = ?, levels = ?, login = ?, recommend = ? where id = ?", user.getName(), user.getPassword(),user.getLevels().intValue(),user.getLogin(),user.getRecommend(), user.getId());
 	}
 
 	
