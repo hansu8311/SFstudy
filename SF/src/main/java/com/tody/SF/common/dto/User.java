@@ -64,4 +64,14 @@ public class User {
 		this.recommend = recommend;
 	}
 	
+	public void upgrageLevel() {
+		Level nextLevel = this.levels.nextLevel();
+		if(nextLevel == null) {
+			throw new IllegalStateException(this.levels + "은 업그레이가 불가능합니다.");
+		}
+		else {
+			this.levels = nextLevel;
+		};
+	}
+	
 }
