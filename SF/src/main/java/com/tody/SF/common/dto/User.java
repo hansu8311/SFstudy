@@ -22,7 +22,7 @@ public class User {
 		this.recommend = recommend;
 		this.email = email;
 		
-	}
+	} 
 	public String getId() {
 		return id;
 	}
