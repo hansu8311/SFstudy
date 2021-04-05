@@ -6,6 +6,7 @@ import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 
+import java.lang.reflect.Proxy;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -31,7 +32,7 @@ import com.tody.SF.common.dao.Interface.UserService;
 import com.tody.SF.common.dto.Level;
 import com.tody.SF.common.dto.User;
 import com.tody.SF.common.service.MockMailSender;
-
+import com.tody.SF.common.service.TransactionHandler;
 import com.tody.SF.common.service.UserServiceImpl;
 import com.tody.SF.common.service.UserServiceTx;
 import static org.mockito.Mockito.*;
@@ -140,9 +141,15 @@ public class UserServiceTest {
 		testUserService.setUserDao(this.userDao);
 		testUserService.setMailSender(mailSender);
 		
-		UserServiceTx  txUserService = new UserServiceTx();
-		txUserService.setTransactionManager(transactionManager);
-		txUserService.setUserService(testUserService);
+		TransactionHandler txHandler = new TransactionHandler();
+		txHandler.setTarget(testUserService);
+		txHandler.setTransactionManager(transactionManager);
+		txHandler.setPattern("upgradeLevels");
+		
+		UserService txUserService = (UserService)Proxy.newProxyInstance(
+				getClass().getClassLoader()
+				, new Class[] {UserService.class}
+				, txHandler);
 		
 		userDao.deleteAll();
 		for(User user : users) 	{userDao.add(user);}
