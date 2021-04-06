@@ -155,7 +155,12 @@
 	        <artifactId>mockito-core</artifactId>
 	        <version>1.10.19</version>
 	    </dependency>
-		
+		<!-- https://mvnrepository.com/artifact/aopalliance/aopalliance -->
+		<dependency>
+		    <groupId>aopalliance</groupId>
+		    <artifactId>aopalliance</artifactId>
+		    <version>1.0</version>
+		</dependency>
 	</dependencies>
     <build>
         <plugins>
