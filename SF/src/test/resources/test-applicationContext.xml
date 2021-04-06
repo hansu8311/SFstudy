@@ -24,15 +24,16 @@
 	<bean id="mailSender" class="com.tody.SF.common.service.DumyMailSender">
 	</bean>
 	
-	<bean id="userService" class="com.tody.SF.common.service.UserServiceTx">
-		<property name="transactionManager" ref="transactionManager" />
-		<property name="userService" ref="userServiceImpl" />
+	<bean id="userService" class="com.tody.SF.common.service.TxProxyFactoryBean">
+		<property name="target" ref="userServiceImpl" />
+		<property name="transactionManager" ref="transactionManager" />		
+		<property name="pattern" value="upgradeLevels" />
+		<property name="serviceInterface" value="com.tody.SF.common.dao.Interface.UserService" />
 	</bean>
 	
 	<bean id="userServiceImpl" class="com.tody.SF.common.service.UserServiceImpl">
 		<property name="userDao" ref="userDao" />
 		<property name="mailSender" ref="mailSender" />
 	</bean>
-	
 </beans>
  

@@ -18,6 +18,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.mail.MailSender;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.test.annotation.DirtiesContext;
@@ -33,6 +34,7 @@ import com.tody.SF.common.dto.Level;
 import com.tody.SF.common.dto.User;
 import com.tody.SF.common.service.MockMailSender;
 import com.tody.SF.common.service.TransactionHandler;
+import com.tody.SF.common.service.TxProxyFactoryBean;
 import com.tody.SF.common.service.UserServiceImpl;
 import com.tody.SF.common.service.UserServiceTx;
 import static org.mockito.Mockito.*;
@@ -41,6 +43,7 @@ import static org.mockito.Mockito.*;
 @ContextConfiguration(locations = "/test-applicationContext.xml")
 public class UserServiceTest {
 	
+	@Autowired ApplicationContext context;
 	@Autowired UserService userService;
 	@Autowired UserServiceImpl userServiceImpl;
 	@Autowired UserDao userDao;
@@ -135,21 +138,18 @@ public class UserServiceTest {
 	}
 	static class TestUserServiceException extends RuntimeException {
 	}
+	
 	@Test
+	@DirtiesContext
 	public void upgradeAllOrNothing()throws Exception{
 		UserServiceImpl testUserService = new TestUserService(users.get(3).getId());
 		testUserService.setUserDao(this.userDao);
 		testUserService.setMailSender(mailSender);
 		
-		TransactionHandler txHandler = new TransactionHandler();
-		txHandler.setTarget(testUserService);
-		txHandler.setTransactionManager(transactionManager);
-		txHandler.setPattern("upgradeLevels");
+		TxProxyFactoryBean txProxyFactoryBean = context.getBean("&userService", TxProxyFactoryBean.class);
+		txProxyFactoryBean.setTarget(testUserService);
 		
-		UserService txUserService = (UserService)Proxy.newProxyInstance(
-				getClass().getClassLoader()
-				, new Class[] {UserService.class}
-				, txHandler);
+		UserService txUserService = (UserService)txProxyFactoryBean.getObject();
 		
 		userDao.deleteAll();
 		for(User user : users) 	{userDao.add(user);}
