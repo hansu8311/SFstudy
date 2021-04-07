@@ -75,7 +75,7 @@ public class DynamicProxyTest {
 		ProxyFactoryBean pfBean = new ProxyFactoryBean();
 		pfBean.setTarget(new HelloTarget());
 		NameMatchMethodPointcut pointcut =new NameMatchMethodPointcut();
-		pointcut.setMappedName("sayH*");
+		pointcut.setMappedName("sayH*");//sayH로 시작하는 모든메소드선택
 		
 		pfBean.addAdvisor(new DefaultPointcutAdvisor(pointcut, new UppercaseAdvice()));
 		
