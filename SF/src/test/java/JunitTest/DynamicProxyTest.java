@@ -9,6 +9,8 @@ import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
 import org.junit.Test;
 import org.springframework.aop.framework.ProxyFactoryBean;
+import org.springframework.aop.support.DefaultPointcutAdvisor;
+import org.springframework.aop.support.NameMatchMethodPointcut;
 
 import com.tody.SF.common.dao.Interface.Hello;
 import com.tody.SF.common.service.HelloTarget;
@@ -66,5 +68,21 @@ public class DynamicProxyTest {
 			return ret.toUpperCase();
 		}
 		
+	}
+	
+	@Test
+	public void pointcutAdvisorTest() {
+		ProxyFactoryBean pfBean = new ProxyFactoryBean();
+		pfBean.setTarget(new HelloTarget());
+		NameMatchMethodPointcut pointcut =new NameMatchMethodPointcut();
+		pointcut.setMappedName("sayH*");
+		
+		pfBean.addAdvisor(new DefaultPointcutAdvisor(pointcut, new UppercaseAdvice()));
+		
+		Hello proxideHello = (Hello)pfBean.getObject();
+		
+		assertThat(proxideHello.sayHello("Toby"), is("HELLO TOBY"));
+		assertThat(proxideHello.sayHi("Toby"), is("HI TOBY"));
+		assertThat(proxideHello.sayThankYou("Toby"), is("THANK YOU TOBY"));
 	}
 }
