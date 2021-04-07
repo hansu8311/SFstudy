@@ -2,22 +2,17 @@ package JunitTest;
 import static com.tody.SF.common.service.UserService.MIN_LOGCOUNT_FOR_SILVER;
 import static com.tody.SF.common.service.UserService.MIN_RECCOMEND_FOR_GOLD;
 import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 
-import java.lang.reflect.Proxy;
-import java.util.ArrayList;
+
 import java.util.Arrays;
 import java.util.List;
-
-import javax.sql.DataSource;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
-import org.springframework.aop.framework.ProxyFactoryBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.mail.MailSender;
@@ -27,29 +22,25 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.PlatformTransactionManager;
 
-import com.sun.mail.iap.Argument;
-import com.tody.SF.common.dao.MockUserDao;
 import com.tody.SF.common.dao.Interface.UserDao;
 import com.tody.SF.common.dao.Interface.UserService;
 import com.tody.SF.common.dto.Level;
 import com.tody.SF.common.dto.User;
-import com.tody.SF.common.service.MockMailSender;
-import com.tody.SF.common.service.TransactionHandler;
-import com.tody.SF.common.service.TxProxyFactoryBean;
 import com.tody.SF.common.service.UserServiceImpl;
-import com.tody.SF.common.service.UserServiceTx;
+
 import static org.mockito.Mockito.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "/test-applicationContext.xml")
 public class UserServiceTest {
 	
-	@Autowired ApplicationContext context;
+	//@Autowired ApplicationContext context;
 	@Autowired UserService userService;
-	@Autowired UserServiceImpl userServiceImpl;
+	@Autowired UserService testUserService;
+	//@Autowired UserServiceImpl userServiceImpl;
 	@Autowired UserDao userDao;
-	@Autowired PlatformTransactionManager transactionManager;
-	@Autowired MailSender mailSender;
+	//@Autowired PlatformTransactionManager transactionManager;
+	//@Autowired MailSender mailSender;
 	List<User> users;
 	@Before
 	public void setup() {
@@ -126,12 +117,9 @@ public class UserServiceTest {
 		
 	}
 	
-	static class TestUserService extends UserServiceImpl {
-		private String id;
-		
-		private TestUserService(String id) {
-			this.id = id;
-		}
+	static class TestUserServiceImpl extends UserServiceImpl {
+		private String id = "kimsoyoun";
+
 		protected void upgradeLevel(User user) {
 			if(user.getId().equals(this.id)) throw new TestUserServiceException();
 			super.upgrageLevel(user);
@@ -141,22 +129,13 @@ public class UserServiceTest {
 	}
 	
 	@Test
-	@DirtiesContext
 	public void upgradeAllOrNothing()throws Exception{
-		UserServiceImpl testUserService = new TestUserService(users.get(3).getId());
-		testUserService.setUserDao(this.userDao);
-		testUserService.setMailSender(mailSender);
-		
-		ProxyFactoryBean txProxyFactoryBean = context.getBean("&userService", ProxyFactoryBean.class);
-		txProxyFactoryBean.setTarget(testUserService);
-		
-		UserService txUserService = (UserService)txProxyFactoryBean.getObject();
-		
+
 		userDao.deleteAll();
 		for(User user : users) 	{userDao.add(user);}
 		
 		try {
-			txUserService.upgradeLevels();
+			this.testUserService.upgradeLevels();
 			fail("TestUserServiceException expected");
 		} catch (TestUserServiceException e) {
 		}
