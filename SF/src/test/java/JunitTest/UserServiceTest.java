@@ -122,7 +122,7 @@ public class UserServiceTest {
 
 		protected void upgradeLevel(User user) {
 			if(user.getId().equals(this.id)) throw new TestUserServiceException();
-			super.upgrageLevel(user);
+			super.upgradeLevel(user);
 		}
 	}
 	static class TestUserServiceException extends RuntimeException {

@@ -37,7 +37,7 @@ public class UserServiceImpl implements UserService{
 		
 		for (User user : users) {
 			if(canUpgradeLevel(user)) {
-				upgrageLevel(user);
+				upgradeLevel(user);
 			}
 		}
 	}
@@ -51,7 +51,7 @@ public class UserServiceImpl implements UserService{
 		}
 	}
 	
-	protected void upgrageLevel(User user) {
+	protected void upgradeLevel(User user) {
 		user.upgrageLevel();
 		userDao.update(user);
 		sendUpgradeEmail(user);
