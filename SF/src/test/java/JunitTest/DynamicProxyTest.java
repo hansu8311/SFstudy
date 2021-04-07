@@ -7,7 +7,11 @@ import java.lang.reflect.Proxy;
 
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
+
 import org.junit.Test;
+import org.springframework.aop.ClassFilter;
+import org.springframework.aop.Pointcut;
+import org.springframework.aop.config.AdvisorComponentDefinition;
 import org.springframework.aop.framework.ProxyFactoryBean;
 import org.springframework.aop.support.DefaultPointcutAdvisor;
 import org.springframework.aop.support.NameMatchMethodPointcut;
@@ -84,5 +88,53 @@ public class DynamicProxyTest {
 		assertThat(proxideHello.sayHello("Toby"), is("HELLO TOBY"));
 		assertThat(proxideHello.sayHi("Toby"), is("HI TOBY"));
 		assertThat(proxideHello.sayThankYou("Toby"), is("THANK YOU TOBY"));
+	}
+	
+	@Test
+	public void classNamePintcutAdvisor() {
+		
+		NameMatchMethodPointcut classMethodPointcut = new NameMatchMethodPointcut() {
+			public ClassFilter getClassFilter() {
+				return new ClassFilter() {
+					@Override
+					public boolean matches(Class<?> clazz) {
+						return clazz.getSimpleName().startsWith("HelloT");
+					}
+				};
+			}
+		};
+		classMethodPointcut.setMappedName("sayH*");
+		
+		checkAdvicde(new HelloTarget(), classMethodPointcut, true);
+		
+		class HelloWord extends HelloTarget{};
+		checkAdvicde(new HelloWord(), classMethodPointcut, false);
+		class HelloToby extends HelloTarget{};
+		checkAdvicde(new HelloToby(), classMethodPointcut, true);
+		
+	
+	}
+	
+	private void checkAdvicde(Object target, Pointcut pointcut, boolean advicde) { 
+		ProxyFactoryBean pfBean = new ProxyFactoryBean();
+		pfBean.setTarget(target);
+		pfBean.addAdvisor(new DefaultPointcutAdvisor(pointcut, new UppercaseAdvice()));
+		
+		Hello proxideHello = (Hello)pfBean.getObject();
+		
+		if(advicde) {
+			assertThat(proxideHello.sayHello("Toby"), is("HELLO TOBY"));
+			assertThat(proxideHello.sayHi("Toby"), is("HI TOBY"));
+			assertThat(proxideHello.sayThankYou("Toby"), is("THANK YOU TOBY")); 	
+		}
+		else {
+			assertThat(proxideHello.sayHello("Toby"), is("Hello Toby"));
+			assertThat(proxideHello.sayHi("Toby"), is("Hi Toby"));
+			assertThat(proxideHello.sayThankYou("Toby"), is("Thank You Toby")); 
+			
+		}
+		
+		
+		
 	}
 }
