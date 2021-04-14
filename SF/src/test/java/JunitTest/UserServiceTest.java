@@ -117,12 +117,19 @@ public class UserServiceTest {
 		
 	}
 	
-	static class TestUserServiceImpl extends UserServiceImpl {
+	static class TestUserService extends UserServiceImpl {
 		private String id = "kimsoyoun";
 
 		protected void upgradeLevel(User user) {
 			if(user.getId().equals(this.id)) throw new TestUserServiceException();
 			super.upgradeLevel(user);
+		}
+		
+		public List<User> getAll(){
+			for(User user : super.getAll()) {
+				super.update(user);
+			}
+			return null;
 		}
 	}
 	static class TestUserServiceException extends RuntimeException {
@@ -142,6 +149,10 @@ public class UserServiceTest {
 		
 		checkLevelUpgraded(users.get(1), false);
 	}
-	
+	@Test
+	public void readOnlyTransactionAttribute(){
+
+		this.testUserService.getAll();
+	}
 
 }
