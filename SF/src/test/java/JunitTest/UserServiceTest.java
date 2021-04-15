@@ -18,10 +18,12 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.mail.MailSender;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import com.tody.SF.common.dao.Interface.UserDao;
@@ -157,19 +159,14 @@ public class UserServiceTest {
 		this.testUserService.getAll();
 	}
 	@Test
+	@Transactional(readOnly = true)
+	@Rollback(false)
 	public void transactionSync(){
-		DefaultTransactionDefinition txDefinition = new DefaultTransactionDefinition();
-		TransactionStatus txStatus = transactionManager.getTransaction(txDefinition);
-		
-		try {
-			userService.deleteAll();
-			userService.add(users.get(0));
-			userService.add(users.get(1));	
-		} finally {
-			transactionManager.rollback(txStatus);
-		}
-		
-		transactionManager.commit(txStatus);
+
+		userService.deleteAll();
+		userService.add(users.get(0));
+		userService.add(users.get(1));	
+
 	}
 
 }
