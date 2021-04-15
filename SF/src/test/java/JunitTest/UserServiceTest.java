@@ -161,10 +161,13 @@ public class UserServiceTest {
 		DefaultTransactionDefinition txDefinition = new DefaultTransactionDefinition();
 		TransactionStatus txStatus = transactionManager.getTransaction(txDefinition);
 		
-		userService.deleteAll();
-		
-		userService.add(users.get(0));
-		userService.add(users.get(1));
+		try {
+			userService.deleteAll();
+			userService.add(users.get(0));
+			userService.add(users.get(1));	
+		} finally {
+			transactionManager.rollback(txStatus);
+		}
 		
 		transactionManager.commit(txStatus);
 	}
