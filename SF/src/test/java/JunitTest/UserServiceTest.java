@@ -141,28 +141,27 @@ public class UserServiceTest {
 	}
 	static class TestUserServiceException extends RuntimeException {
 	}
-	
-	@Test
-	public void upgradeAllOrNothing()throws Exception{
-
-		userDao.deleteAll();
-		for(User user : users) 	{userDao.add(user);}
-		
-		try {
-			this.testUserService.upgradeLevels();
-			fail("TestUserServiceException expected");
-		} catch (TestUserServiceException e) {
-		}
-		
-		checkLevelUpgraded(users.get(1), false);
-	}
+//	
+//	@Test
+//	public void upgradeAllOrNothing()throws Exception{
+//
+//		userDao.deleteAll();
+//		for(User user : users) 	{userDao.add(user);}
+//		
+//		try {
+//			this.testUserService.upgradeLevels();
+//			fail("TestUserServiceException expected");
+//		} catch (TestUserServiceException e) {
+//		}
+//		
+//		checkLevelUpgraded(users.get(1), false);
+//	}
 	@Test
 	public void readOnlyTransactionAttribute(){
 
 		this.testUserService.getAll();
 	}
 	@Test
-	@Rollback(true)
 	public void transactionSync(){
 
 		userService.deleteAll();
