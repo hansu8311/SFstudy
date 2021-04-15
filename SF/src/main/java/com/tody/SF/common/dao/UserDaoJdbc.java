@@ -22,6 +22,7 @@ import com.tody.SF.common.dao.Interface.UserDao;
 import com.tody.SF.common.dto.Level;
 import com.tody.SF.common.dto.User;
 import com.tody.SF.exception.DuplicateUserIdException;
+import com.tody.SF.sqlService.SqlService;
 
 
 public class UserDaoJdbc implements UserDao {
@@ -42,41 +43,42 @@ public class UserDaoJdbc implements UserDao {
 	};
 	
 	private JdbcTemplate jdbcTemplate;
-	private Map<String, String> sqlMap;
 	
-	public void setSqlMap(Map<String, String> sqlMap) {
-		this.sqlMap = sqlMap;
+	private SqlService sqlService;
+	public void setSqlService(SqlService sqlService) {
+		this.sqlService = sqlService;
 	}
+
 	public void setDataSource(DataSource dataSource) {
 		this.jdbcTemplate = new JdbcTemplate(dataSource);
 	}
 	
 	public void add(final User user) throws DuplicateKeyException{
-			this.jdbcTemplate.update(this.sqlMap.get("add"), user.getId(), user.getName(), user.getPassword(),user.getLevels().intValue(),user.getLogin(),user.getRecommend(), user.getEmail());
+			this.jdbcTemplate.update(this.sqlService.getSql("userAdd"), user.getId(), user.getName(), user.getPassword(),user.getLevels().intValue(),user.getLogin(),user.getRecommend(), user.getEmail());
 	}
 	
 	public void deleteAll() {
-		this.jdbcTemplate.update(this.sqlMap.get("deleteAll"));
+		this.jdbcTemplate.update(this.sqlService.getSql("userDeleteAll"));
 	}
 	
 	public User get(String id) {
-		return this.jdbcTemplate.queryForObject(this.sqlMap.get("get"), 
+		return this.jdbcTemplate.queryForObject(this.sqlService.getSql("userGet"), 
 				new Object[] {id},
 				this.userMapper);
 	}
 
 	public int getCount() {		
-		return this.jdbcTemplate.queryForInt(this.sqlMap.get("getCount"));
+		return this.jdbcTemplate.queryForInt(this.sqlService.getSql("userGetCount"));
 	}
 	
 	public List<User> getAll() {
-		return this.jdbcTemplate.query(this.sqlMap.get("getAll"), 
+		return this.jdbcTemplate.query(this.sqlService.getSql("userGetAll"), 
 		this.userMapper);	
 	}
 
 	@Override
 	public void update(User user) {
-		this.jdbcTemplate.update(this.sqlMap.get("update"), user.getName(), user.getPassword(),user.getLevels().intValue(),user.getLogin(),user.getRecommend(),user.getEmail(), user.getId());
+		this.jdbcTemplate.update(this.sqlService.getSql("userUpdate"), user.getName(), user.getPassword(),user.getLevels().intValue(),user.getLogin(),user.getRecommend(),user.getEmail(), user.getId());
 	}
 
 	
