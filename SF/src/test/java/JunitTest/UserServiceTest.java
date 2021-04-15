@@ -21,6 +21,8 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import com.tody.SF.common.dao.Interface.UserDao;
 import com.tody.SF.common.dao.Interface.UserService;
@@ -39,7 +41,7 @@ public class UserServiceTest {
 	@Autowired UserService testUserService;
 	//@Autowired UserServiceImpl userServiceImpl;
 	@Autowired UserDao userDao;
-	//@Autowired PlatformTransactionManager transactionManager;
+	@Autowired PlatformTransactionManager transactionManager;
 	//@Autowired MailSender mailSender;
 	List<User> users;
 	@Before
@@ -153,6 +155,18 @@ public class UserServiceTest {
 	public void readOnlyTransactionAttribute(){
 
 		this.testUserService.getAll();
+	}
+	@Test
+	public void transactionSync(){
+		DefaultTransactionDefinition txDefinition = new DefaultTransactionDefinition();
+		TransactionStatus txStatus = transactionManager.getTransaction(txDefinition);
+		
+		userService.deleteAll();
+		
+		userService.add(users.get(0));
+		userService.add(users.get(1));
+		
+		transactionManager.commit(txStatus);
 	}
 
 }

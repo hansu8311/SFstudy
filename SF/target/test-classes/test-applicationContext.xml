@@ -35,17 +35,8 @@
 	
 	<bean id="testUserService" class="JunitTest.UserServiceTest$TestUserService" parent="userService"/>
 	
-	<bean class = "org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator" />
+	<tx:annotation-driven />
 	
-	<aop:config>
-		<aop:advisor advice-ref="transactionAdvice" pointcut="bean(*Service)"/>
-	</aop:config>
-
-	<tx:advice id="transactionAdvice">
-		<tx:attributes>
-			<tx:method name="get*" read-only="true"/>
-			<tx:method name="*"/>
-		</tx:attributes>
-	</tx:advice>
+	
 </beans>
  
