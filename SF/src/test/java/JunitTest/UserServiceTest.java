@@ -71,11 +71,11 @@ public class UserServiceTest {
 		MailSender mockMailSender = mock(MailSender.class);
 		userServiceImpl.setMailSender(mockMailSender);
 				
-		userServiceImpl.upgradeLevels();
+		userServiceImpl.upgradeLevels(); 
 		
 		verify(mockUserDao, times(2)).update(any(User.class));
 		verify(mockUserDao, times(2)).update(any(User.class));
-		verify(mockUserDao).update(users.get(1));
+		verify(mockUserDao).update(users.get(1)); 
 		assertThat(users.get(1).getLevels(), is(Level.SILVER));
 		verify(mockUserDao).update(users.get(3));
 		assertThat(users.get(3).getLevels(), is(Level.GOLD));
