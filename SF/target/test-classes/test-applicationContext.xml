@@ -23,7 +23,11 @@
 		</property>
 	</bean>
 	
-	<bean id="sqlService" class="com.tody.SF.sqlService.XmlSqlService"></bean>
+	<bean id="sqlService" class="com.tody.SF.sqlService.XmlSqlService">
+		<property name="sqlReader" ref="sqlService" />
+		<property name="sqlRegistry" ref="sqlService" />
+		<property name="sqlmapFile" value="sqlmap.xml" />
+	</bean>
 	
 	<bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
 		<property name="dataSource" ref="dataSource" />
@@ -40,6 +44,7 @@
 	<bean id="testUserService" class="JunitTest.UserServiceTest$TestUserService" parent="userService"/>
 	
 	<tx:annotation-driven />
+	<context:annotation-config />
 	
 	
 </beans>
