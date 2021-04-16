@@ -23,9 +23,13 @@
 		</property>
 	</bean>
 	
-	<bean id="sqlService" class="com.tody.SF.sqlService.XmlSqlService">
-		<property name="sqlReader" ref="sqlService" />
-		<property name="sqlRegistry" ref="sqlService" />
+	<bean id="sqlService" class="com.tody.SF.sqlService.DefaultSqlService">
+	</bean>
+	
+	<bean id="sqlRegistry" class="com.tody.SF.sqlService.HashMapSqlRegistry">
+	</bean>
+
+	<bean id="sqlReader" class="com.tody.SF.sqlService.JaxbXmlSqlReader">	
 		<property name="sqlmapFile" value="sqlmap.xml" />
 	</bean>
 	
