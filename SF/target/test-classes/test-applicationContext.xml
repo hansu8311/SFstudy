@@ -23,14 +23,12 @@
 		</property>
 	</bean>
 	
-	<bean id="sqlService" class="com.tody.SF.sqlService.DefaultSqlService">
+	<bean id="sqlService" class="com.tody.SF.sqlService.OxmSqlService">
+		<property name="unmarshaller" ref="unmarshaller" />
 	</bean>
 	
-	<bean id="sqlRegistry" class="com.tody.SF.sqlService.HashMapSqlRegistry">
-	</bean>
-
-	<bean id="sqlReader" class="com.tody.SF.sqlService.JaxbXmlSqlReader">	
-		<property name="sqlmapFile" value="sqlmap.xml" />
+	<bean id="unmarshaller" class="org.springframework.oxm.jaxb.Jaxb2Marshaller">
+		<property name="contextPath" value="com.tody.SF.sqlService.jaxb" />
 	</bean>
 	
 	<bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
