@@ -2,13 +2,19 @@ package com.tody.SF.sqlService;
 
 import java.io.InputStream;
 
+
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
+import org.junit.runner.RunWith;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
 import com.tody.SF.common.dao.UserDaoJdbc;
 import com.tody.SF.sqlService.jaxb.SqlType;
 import com.tody.SF.sqlService.jaxb.Sqlmap;
+
 
 public class JaxbXmlSqlReader implements SqlReader{
 	private static final String DEFAULT_SQLMAP_FILE = "sqlmap.xml";

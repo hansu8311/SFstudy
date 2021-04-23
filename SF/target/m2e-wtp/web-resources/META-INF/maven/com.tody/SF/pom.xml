@@ -172,6 +172,12 @@
 			<artifactId>aspectjweaver</artifactId>
 			<version>1.8.6</version> 
 		</dependency>
+		<!-- Oxm -->
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-oxm</artifactId>
+			<version>4.3.4.RELEASE</version>
+		</dependency>
 		
 	</dependencies>
     <build>
